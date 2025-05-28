@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philosophers.h                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: manon <manon@student.42.fr>                +#+  +:+       +#+        */
+/*   By: mlemerci <mlemerci@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 22:38:13 by manon             #+#    #+#             */
-/*   Updated: 2025/05/16 19:01:12 by manon            ###   ########.fr       */
+/*   Updated: 2025/05/28 16:22:05 by mlemerci         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,17 +19,31 @@
 # include <pthread.h>
 
 //editeur de lien -lpthread et compilateur -D_REENTRANT et/ou -DLinux
+// valgrind --tool=helgrind ./philo 5 610 200 200 3
 
-	pthread_t philosopher;
+	typedef struct s_p
 	{
+		pthread_t	philosopher;
+		int 		i;
 	
-	}
+	}	t_p;
 
+	typedef	struct s_f
+	{
+		pthread_mutex_t	fork_mutex;
+		int				i;
+	}	t_f;
 
-	//number_of_philosophers 
-	//time_to_die 
-	//time_to_eat 
-	//time_to_sleep
-	//[number_of_times_each_philosopher_must_eat]
+	typedef struct s_args
+	{
+		int				nbr_p;
+		int				t_die;
+		int				t_eat;
+		int				t_sleep;
+		int				nbr_loop;
+		long			chrono;
+		pthread_t		*t_p;
+		pthread_mutex_t	*t_f;
+	}	t_args;
 
 #endif

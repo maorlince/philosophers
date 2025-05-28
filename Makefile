@@ -2,12 +2,9 @@ NAME = philosophers
 
 INCDIR = INCLUDES
 CC = gcc
-CFLAGS = -Wall -Wextra -Werror -I$(INCDIR) -I
-SRCS =	SOURCES/flood_fill.c \
-		SOURCES/init.c \
-		SOURCES/input.c \
-		SOURCES/main.c \
-		SOURCES/utils.c
+CFLAGS = -Wall -Wextra -Werror -I$(INCDIR) -pthread
+SRCS =	philosophers.c \
+		utils.c
 
 OBJS = $(SRCS:.c=.o)
 

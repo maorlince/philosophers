@@ -6,13 +6,11 @@
 /*   By: mlemerci <mlemerci@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 22:33:32 by manon             #+#    #+#             */
-/*   Updated: 2025/05/17 21:39:53 by mlemerci         ###   ########.fr       */
+/*   Updated: 2025/05/28 17:29:59 by mlemerci         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 # include "philosophers.h"
-
-//philo number_of_philosophers time_to_die time_to_eat time_to_sleep [number_of_times_each_philosopher_must_eat]
 
 int	ft_atoi(const char *str)
 {
@@ -38,50 +36,70 @@ int	ft_atoi(const char *str)
 	}
 	return (sign * res);
 }
-
-void live_likeem()
+unsigned long	get_time(void)
 {
-	pthread_mutex_lock (pthread_mutex_t * mutex);
-	ft_printf("%d %s eat for the knowledges🍏\n", timestamp_in_m, philosopher[i]);
-	pthread_mutex_unlock (pthread_mutex_t * mutex);
-	pthread_mutex_lock (pthread_mutex_t * mutex);
-	ft_printf("%d %s thinks like a genius⚡\n", timestamp_in_m, philosopher[i]);
-	pthread_mutex_unlock (pthread_mutex_t * mutex);
-	pthread_mutex_lock (pthread_mutex_t * mutex);
-	ft_printf("%d %s sleep in yours dreams🌕\n", timestamp_in_m, philosopher[i]);
-	pthread_mutex_unlock (pthread_mutex_t * mutex);
-	pthread_mutex_lock (pthread_mutex_t * mutex);
-	ft_printf("%d %s just died🗿\n", timestamp_in_m, philosopher[i]);
+	struct timeval	tv;
+	//unsigned long	last_update;
+	//unsigned long	current;
+
+	gettimeofday (&tv, NULL);
+		return ((tv.tv_sec * 1000) + (tv.tv_usec / 1000));
+	//current = get_time();
+	////|| current = (tv.tv_sec * 1000) + (tv.tv_usec / 1000)
+	//if (current - last_update >= 500) //500 = demi seconde
+	//{
+	//	//[...]
+	//	last_update = current;
+	//}
 }
 
-static void 	init_values(char *argv)
+void live_likeem(t_args *args, int i)
+{
+	pthread_mutex_lock (&args->t_f[i]);
+	ft_printf("%d %s eat for the knowledges🍏\n", args->chrono, i);
+	usleep(100);
+	pthread_mutex_unlock (&args->t_f[i]);
+	ft_printf("%d %s thinks like a genius⚡\n", args->chrono, i);
+	usleep(100);
+	ft_printf("%d %s sleep in yours dreams🌕\n", args->chrono, i);
+	usleep(100);
+}
+
+static void 	init_values(char **argv, t_args *args)
 {
 	unsigned long current;
+
+	current = get_time();
+	args->chrono = (gettimeofday - current);
 	
-	current = time();
-	timestamp_in_m = (gettimeofday - current);
-	
-	number_of_philosopher = ft_atoi(argv[1]);
-	time_to_die = argv[2];
-	time_to_eat = argv[3];
-	time_to_sleep = argv[4];
-	number_of_times_each_philosopher_must_eat = 0;
+	args->nbr_p = ft_atoi(argv[1]);
+	args->t_die = ft_atoi(argv[2]);
+	args->t_eat = ft_atoi(argv[3]);
+	args->t_sleep = ft_atoi(argv[4]);
+	args->nbr_loop = 0;
 	if (argv[5])
-		number_of_times_each_philosopher_must_eat = argv[5];
+		args->nbr_loop =  ft_atoi(argv[5]);
+	else
+		args->nbr_loop = -1;
 	
 }
 
 int main(int argc, char **argv)
 {
 	int i;
+	t_args 	args;
+	pthread_t t_p;
 
 	if (argc != 6)
 		return (ft_printf("Erreur : nombre d'arguments incorrect"));
-	init_values(argv);
 	i = 0;
-	while(i <= number_of_philosopher)
+	init_values(argv, &args);
+	pthread_mutex_init(&args.t_f[i], NULL);
+	while(i <= args.nbr_p)
 	{
 		i++;
-		pthread_create(&philosopher[i], NULL, live_likeem, NULL);
+		pthread_create(&args.t_p[i], NULL, live_likeem, (void *)&args);
 	}
+    pthread_join(args.t_p[i], NULL);
+    pthread_mutex_destroy(&args.t_f[i]);
 }
