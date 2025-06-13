@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: manon <manon@student.42.fr>                +#+  +:+       +#+        */
+/*   By: mlemerci <mlemerci@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/31 13:02:16 by manon             #+#    #+#             */
-/*   Updated: 2025/06/11 18:46:17 by manon            ###   ########.fr       */
+/*   Updated: 2025/06/13 19:37:47 by mlemerci         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,6 @@ void	print_status(t_args *args, int i, const char *str)
 
 	pthread_mutex_lock(&args->print_mutex);
 	current = (get_time() - args->chrono);
-	ft_printf("%d Philo %d %s\n", current, i, str);
+	printf("%d Philo %d %s\n", current, i, str);
 	pthread_mutex_unlock(&args->print_mutex);
 }

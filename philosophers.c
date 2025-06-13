@@ -3,20 +3,19 @@
 /*                                                        :::      ::::::::   */
 /*   philosophers.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: manon <manon@student.42.fr>                +#+  +:+       +#+        */
+/*   By: mlemerci <mlemerci@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 22:33:32 by manon             #+#    #+#             */
-/*   Updated: 2025/06/12 15:59:41 by manon            ###   ########.fr       */
+/*   Updated: 2025/06/13 19:44:30 by mlemerci         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosophers.h"
 
-//norme and leak omg
+//norme
 //+de fun dans les printf +de MULTICOULEURS always for printf
 //t_die? INTUABLES LES MECS
 //t_eat satiated when??
-//philo 1 ou 0 ?
 //securite init atoi -1 exit!
 //printf KO parfois sur 200philos
 
@@ -28,7 +27,7 @@ void	ft_death(t_args *args, int i)
 
 	pthread_mutex_lock(&args->print_mutex);
 	current = (get_time() - args->chrono);
-	ft_printf("%d Philo %d skip the game🗿\n", current, i);
+	printf("%d Philo %d skip the game🗿\n", current, i);
 	//pthread_mutex_unlock (&args->forks[i]);
 	//pthread_mutex_unlock (&args->forks[(i + 1) % args->nbr_p]);
 	pthread_mutex_destroy(&args->forks[i]);
@@ -49,8 +48,8 @@ void	*live_likeem(void *ptr)
 	philo->satiated = get_time();
 	while (philo->nbr_loop > 0)
 	{
-		if (i % 2 == 0)
-			usleep(100);
+		//if (i % 2 == 0)
+		//	usleep(100);
 		if (i % 2 == 0)
 	{
 		pthread_mutex_lock (&args->forks[i]);
@@ -135,14 +134,14 @@ int	main(int argc, char **argv)
 
 	i = 1;
 	if (argc != 5 && argc != 6)
-		return (ft_printf("[Erreur : nombre d'args incorrect]\n"));
+		return (printf("[Erreur : nombre d'args incorrect]\n"));
 	if (init_values(argv, &args))
-		return (ft_printf("[Erreur : init_values]\n"));
+		return (printf("[Erreur : init_values]\n"));
 	philos = malloc(sizeof(t_philo) * args.nbr_p);
 	if (!philos)
-		return (ft_printf("[Erreur : malloc philos]\n"));
+		return (printf("[Erreur : malloc philos]\n"));
 	if (init_struct(philos, &args))
-		return (ft_printf("[Erreur : init_struct]\n"));
+		return (printf("[Erreur : init_struct]\n"));
 	while (i < args.nbr_p)
 	{
 		pthread_join(args.t_p[i], NULL);

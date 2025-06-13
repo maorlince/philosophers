@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philosophers.h                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: manon <manon@student.42.fr>                +#+  +:+       +#+        */
+/*   By: mlemerci <mlemerci@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 22:38:13 by manon             #+#    #+#             */
-/*   Updated: 2025/06/12 15:57:06 by manon            ###   ########.fr       */
+/*   Updated: 2025/06/13 18:42:57 by mlemerci         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,8 +30,8 @@ typedef struct s_args
 	unsigned long	t_eat;
 	unsigned long	t_sleep;
 	unsigned long	chrono;
-	int				died;
-	pthread_mutex_t	dead_mutex;
+	//int				died;
+	//pthread_mutex_t	dead_mutex;
 	pthread_t		*t_p;
 	pthread_mutex_t	*forks;
 	pthread_mutex_t	print_mutex;
