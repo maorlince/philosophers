@@ -6,18 +6,18 @@
 /*   By: mlemerci <mlemerci@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 22:38:13 by manon             #+#    #+#             */
-/*   Updated: 2025/06/13 18:42:57 by mlemerci         ###   ########.fr       */
+/*   Updated: 2025/06/16 14:51:24 by mlemerci         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef PHILOSOPHERS_H
 # define PHILOSOPHERS_H
 
-# include "ft_printf/ft_printf.h"
-
 # include <sys/time.h>
 # include <pthread.h>
 # include <stdlib.h>
+# include <stdio.h>
+# include <unistd.h>
 
 //editeur de lien -lpthread et compilateur -D_REENTRANT et/ou -DLinux
 // valgrind --tool=helgrind ./philo 5 610 200 200 3
