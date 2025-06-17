@@ -6,7 +6,7 @@
 /*   By: mlemerci <mlemerci@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 22:33:32 by manon             #+#    #+#             */
-/*   Updated: 2025/06/16 15:37:51 by mlemerci         ###   ########.fr       */
+/*   Updated: 2025/06/16 17:58:29 by mlemerci         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,26 @@ void	ft_death(t_args *args, int i)
 	pthread_mutex_destroy(&args->print_mutex);
 	exit(0);
 }
+
+void	ft_eat(t_args *args, int i)
+{
+	if (i % 2 == 0)
+	{
+		pthread_mutex_lock (&args->forks[i]);
+		print_status(args, i, "take a fork🍴");
+		pthread_mutex_lock (&args->forks[(i + 1) % args->nbr_p]);
+		print_status(args, i, "take an other fork🍽️");
+	}
+	else
+	{
+		pthread_mutex_lock (&args->forks[(i + 1) % args->nbr_p]);
+		print_status(args, i, "take a fork🍴");
+		pthread_mutex_lock (&args->forks[i]);
+		print_status(args, i, "take an other fork🍽️");
+	}
+	print_status(args, i, "eat for the knowledges🍏");
+}
+
 void	*live_likeem(void *ptr)
 {
 	t_philo			*philo;
@@ -51,21 +71,7 @@ void	*live_likeem(void *ptr)
 		usleep(100);
 	while (philo->nbr_loop > 0)
 	{
-		if (i % 2 == 0)
-		{
-			pthread_mutex_lock (&args->forks[i]);
-			print_status(args, philo->id, "take a fork🍴");
-			pthread_mutex_lock (&args->forks[(i + 1) % args->nbr_p]);
-			print_status(args, philo->id, "take an other fork🍽️");
-		}
-		else
-		{
-			pthread_mutex_lock (&args->forks[(i + 1) % args->nbr_p]);
-			print_status(args, philo->id, "take a fork🍴");
-			pthread_mutex_lock (&args->forks[i]);
-			print_status(args, philo->id, "take an other fork🍽️");
-		}
-		print_status(args, philo->id, "eat for the knowledges🍏");
+		ft_eat(args, i);
 		philo->satiated = get_time();
 		usleep(args->t_eat);
 		pthread_mutex_unlock (&args->forks[i]);
