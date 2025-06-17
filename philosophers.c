@@ -6,7 +6,7 @@
 /*   By: mlemerci <mlemerci@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 22:33:32 by manon             #+#    #+#             */
-/*   Updated: 2025/06/16 17:58:29 by mlemerci         ###   ########.fr       */
+/*   Updated: 2025/06/17 14:22:06 by mlemerci         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,22 +20,33 @@
 //nom exec philo?
 //time bug et print si flag
 
-//flag -sanitize
-
-void	ft_death(t_args *args, int i)
+void	*ft_death(void *ptr)
 {
+	t_args	*args = (t_args *)ptr;
 	int	current;
-
-	pthread_mutex_lock(&args->print_mutex);
-	current = (get_time() - args->chrono);
-	printf("%d Philo %d skip the game🗿\n", current, i);
-	//pthread_mutex_unlock (&args->forks[i]);
-	//pthread_mutex_unlock (&args->forks[(i + 1) % args->nbr_p]);
-	pthread_mutex_destroy(&args->forks[i]);
-	pthread_mutex_destroy(&args->forks[(i + 1) % args->nbr_p]);
-	//pthread_mutex_unlock(&args->print_mutex);
-	pthread_mutex_destroy(&args->print_mutex);
-	exit(0);
+	int i;
+	
+	while (1)
+	{
+		i = 0;
+		while (i < args->nbr_p)
+		{
+			if (get_time() - args->philos[i].satiated > args->t_die)
+			{
+				pthread_mutex_lock(&args->print_mutex);
+				current = (get_time() - args->chrono);
+				printf("%d Philo %d skip the game🗿\n", current, i);
+				pthread_mutex_lock(&args->dead_mutex);
+				args->dead = 1;
+				pthread_mutex_unlock(&args->dead_mutex);
+				pthread_mutex_unlock(&args->print_mutex);
+				return (NULL);
+			}
+			i++;
+		}
+		usleep(1000);
+	}
+	return (NULL);
 }
 
 void	ft_eat(t_args *args, int i)
@@ -69,7 +80,7 @@ void	*live_likeem(void *ptr)
 	philo->satiated = get_time();
 	if (i % 2 == 0)
 		usleep(100);
-	while (philo->nbr_loop > 0)
+	while (philo->nbr_loop > 0 && args->dead != 1)
 	{
 		ft_eat(args, i);
 		philo->satiated = get_time();
@@ -101,6 +112,7 @@ static int	init_values(char **argv, t_args *args)
 	args->t_sleep = ft_atoi(argv[4]);
 	args->t_p = malloc(sizeof(pthread_t) * args->nbr_p);
 	args->forks = malloc(sizeof(pthread_mutex_t) * args->nbr_p);
+	args->dead = 0;
 	if (argv[5])
 		args->loop = ft_atoi(argv[5]);
 	else
@@ -117,7 +129,9 @@ static int	init_struct(t_philo *philos, t_args *args)
 
 	i = 0;
 	if (pthread_mutex_init(&args->print_mutex, NULL) != 0)
-			return (1);
+		return (1);
+	if (pthread_mutex_init(&args->dead_mutex, NULL) != 0)
+		return (1);
 	while (i < args->nbr_p)
 	{
 		if (pthread_mutex_init(&args->forks[i], NULL) != 0)
@@ -149,17 +163,19 @@ int	main(int argc, char **argv)
 		return (printf("[Erreur : malloc philos]\n"));
 	if (init_struct(philos, &args))
 		return (printf("[Erreur : init_struct]\n"));
+	args.philos = philos; 
+	pthread_t verif_death;
+	pthread_create(&verif_death, NULL, ft_death, &args);
 	while (i < args.nbr_p)
-	{
-		pthread_join(args.t_p[i], NULL);
-		i++;
-	}
+		pthread_join(args.t_p[i++], NULL);
+	pthread_join(verif_death, NULL);
 	while (i != 0)
 	{
 		i--;
 		pthread_mutex_destroy(&args.forks[i]);
 	}
 	pthread_mutex_destroy(&args.print_mutex);
+	pthread_mutex_destroy(&args.dead_mutex);
 	free(args.t_p);
 	free(args.forks);
 	free(philos);

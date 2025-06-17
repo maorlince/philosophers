@@ -6,7 +6,7 @@
 /*   By: mlemerci <mlemerci@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 22:38:13 by manon             #+#    #+#             */
-/*   Updated: 2025/06/16 14:51:24 by mlemerci         ###   ########.fr       */
+/*   Updated: 2025/06/17 14:02:03 by mlemerci         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,19 +22,23 @@
 //editeur de lien -lpthread et compilateur -D_REENTRANT et/ou -DLinux
 // valgrind --tool=helgrind ./philo 5 610 200 200 3
 
+struct s_philo;
+typedef struct s_philo t_philo;
+
 typedef struct s_args
 {
 	int				nbr_p;
 	int				loop;
+	int				dead;
 	unsigned long	t_die;
 	unsigned long	t_eat;
 	unsigned long	t_sleep;
 	unsigned long	chrono;
-	//int				died;
-	//pthread_mutex_t	dead_mutex;
+	t_philo			*philos;
 	pthread_t		*t_p;
 	pthread_mutex_t	*forks;
 	pthread_mutex_t	print_mutex;
+	pthread_mutex_t	dead_mutex;
 }	t_args;
 
 typedef struct s_philo
