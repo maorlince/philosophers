@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philosophers.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mlemerci <mlemerci@student.42.fr>          +#+  +:+       +#+        */
+/*   By: manon <manon@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 22:33:32 by manon             #+#    #+#             */
-/*   Updated: 2025/06/17 14:22:06 by mlemerci         ###   ########.fr       */
+/*   Updated: 2025/06/18 21:20:14 by manon            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,37 +14,53 @@
 
 //norme
 //+de fun dans les printf +de MULTICOULEURS always for printf
-//t_die? INTUABLES LES MECS
 //t_eat satiated when??
 //securite init atoi -1 exit!
 //nom exec philo?
-//time bug et print si flag
+//ordre changeant
 
-void	*ft_death(void *ptr)
+//void	*ft_death(void *ptr)
+//{
+//	int		i;
+//	t_args	*args;
+//
+//	args = (t_args *)ptr;
+//	while (1)
+//	{
+//		i = 0;
+//		while (i < args->nbr_p)
+//		{
+//			if (get_time() - args->philos[i].satiated > args->t_die )//&& args->philos->nbr_loop != 0)
+//			{
+//				pthread_mutex_lock(&args->print_mutex);
+//				printf("%ld Philo %d skip the game🗿\n",
+//					(get_time() - args->chrono), i);
+//				pthread_mutex_lock(&args->dead_mutex);
+//				args->dead = 1;
+//				pthread_mutex_unlock(&args->dead_mutex);
+//				pthread_mutex_unlock(&args->print_mutex);
+//				return (NULL);
+//			}
+//			i++;
+//		}
+//		usleep(1000);
+//	}
+//	return (NULL);
+//}
+
+void	*ft_death(t_args *args, int i)
 {
-	t_args	*args = (t_args *)ptr;
-	int	current;
-	int i;
-	
-	while (1)
+
+	if (get_time() - args->philos[i].satiated > args->t_die )
 	{
-		i = 0;
-		while (i < args->nbr_p)
-		{
-			if (get_time() - args->philos[i].satiated > args->t_die)
-			{
-				pthread_mutex_lock(&args->print_mutex);
-				current = (get_time() - args->chrono);
-				printf("%d Philo %d skip the game🗿\n", current, i);
-				pthread_mutex_lock(&args->dead_mutex);
-				args->dead = 1;
-				pthread_mutex_unlock(&args->dead_mutex);
-				pthread_mutex_unlock(&args->print_mutex);
-				return (NULL);
-			}
-			i++;
-		}
-		usleep(1000);
+		pthread_mutex_lock(&args->print_mutex);
+		printf("%ld Philo %d skip the game🗿\n",
+			(get_time() - args->chrono), i);
+		pthread_mutex_lock(&args->dead_mutex);
+		args->dead = 1;
+		pthread_mutex_unlock(&args->dead_mutex);
+		pthread_mutex_unlock(&args->print_mutex);
+		return (NULL);
 	}
 	return (NULL);
 }
@@ -118,7 +134,7 @@ static int	init_values(char **argv, t_args *args)
 	else
 		args->loop = -1;
 	if (!args->t_p || !args->forks || args->nbr_p <= 0 || args->t_die <= 0
-			|| args->t_eat <= 0 || args->t_sleep <= 0)
+		|| args->t_eat <= 0 || args->t_sleep <= 0)
 		return (1);
 	return (0);
 }
@@ -149,9 +165,10 @@ static int	init_struct(t_philo *philos, t_args *args)
 
 int	main(int argc, char **argv)
 {
-	int		i;
-	t_args	args;
-	t_philo	*philos;
+	int			i;
+	t_args		args;
+	t_philo		*philos;
+	//pthread_t	verif_death;
 
 	i = 0;
 	if (argc != 5 && argc != 6)
@@ -163,20 +180,12 @@ int	main(int argc, char **argv)
 		return (printf("[Erreur : malloc philos]\n"));
 	if (init_struct(philos, &args))
 		return (printf("[Erreur : init_struct]\n"));
-	args.philos = philos; 
-	pthread_t verif_death;
-	pthread_create(&verif_death, NULL, ft_death, &args);
+	args.philos = philos;
+	//pthread_create(&verif_death, NULL, ft_death, &args);
 	while (i < args.nbr_p)
 		pthread_join(args.t_p[i++], NULL);
-	pthread_join(verif_death, NULL);
-	while (i != 0)
-	{
-		i--;
+	//pthread_join(verif_death, NULL);
+	while (i--)
 		pthread_mutex_destroy(&args.forks[i]);
-	}
-	pthread_mutex_destroy(&args.print_mutex);
-	pthread_mutex_destroy(&args.dead_mutex);
-	free(args.t_p);
-	free(args.forks);
-	free(philos);
+	clean_all(philos, &args);
 }

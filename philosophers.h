@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philosophers.h                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mlemerci <mlemerci@student.42.fr>          +#+  +:+       +#+        */
+/*   By: manon <manon@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 22:38:13 by manon             #+#    #+#             */
-/*   Updated: 2025/06/17 14:02:03 by mlemerci         ###   ########.fr       */
+/*   Updated: 2025/06/18 20:56:58 by manon            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,8 +22,8 @@
 //editeur de lien -lpthread et compilateur -D_REENTRANT et/ou -DLinux
 // valgrind --tool=helgrind ./philo 5 610 200 200 3
 
-struct s_philo;
-typedef struct s_philo t_philo;
+struct					s_philo;
+typedef struct s_philo	t_philo;
 
 typedef struct s_args
 {
@@ -53,5 +53,6 @@ typedef struct s_philo
 int				ft_atoi(const char *str);
 unsigned long	get_time(void);
 void			print_status(t_args *args, int i, const char *str);
+void 			clean_all(t_philo *philos, t_args *args);
 
 #endif

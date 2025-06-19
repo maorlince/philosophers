@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mlemerci <mlemerci@student.42.fr>          +#+  +:+       +#+        */
+/*   By: manon <manon@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/31 13:02:16 by manon             #+#    #+#             */
-/*   Updated: 2025/06/13 19:37:47 by mlemerci         ###   ########.fr       */
+/*   Updated: 2025/06/18 20:57:05 by manon            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,4 +45,13 @@ void	print_status(t_args *args, int i, const char *str)
 	current = (get_time() - args->chrono);
 	printf("%d Philo %d %s\n", current, i, str);
 	pthread_mutex_unlock(&args->print_mutex);
+}
+
+void	clean_all(t_philo *philos, t_args *args)
+{
+	pthread_mutex_destroy(&args->print_mutex);
+	pthread_mutex_destroy(&args->dead_mutex);
+	free(args->t_p);
+	free(args->forks);
+	free(philos);
 }
