@@ -6,7 +6,7 @@
 /*   By: manon <manon@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/31 13:02:16 by manon             #+#    #+#             */
-/*   Updated: 2025/06/18 20:57:05 by manon            ###   ########.fr       */
+/*   Updated: 2025/06/25 13:30:38 by manon            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ int	ft_atoi(const char *str)
 		res = res * 10 + (str[i] - '0');
 		i++;
 	}
-	if (str[i] != '\0' && i > 1)
+	if (str[i] != '\0' || i == 0)
 		return (-1);
 	return (res);
 }
@@ -41,6 +41,13 @@ void	print_status(t_args *args, int i, const char *str)
 {
 	int	current;
 
+	pthread_mutex_lock(&args->dead_mutex);
+	if (args->dead)
+	{
+		pthread_mutex_unlock(&args->dead_mutex);
+		return ;
+	}
+	pthread_mutex_unlock(&args->dead_mutex);
 	pthread_mutex_lock(&args->print_mutex);
 	current = (get_time() - args->chrono);
 	printf("%d Philo %d %s\n", current, i, str);

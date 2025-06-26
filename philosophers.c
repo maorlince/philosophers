@@ -6,7 +6,7 @@
 /*   By: manon <manon@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 22:33:32 by manon             #+#    #+#             */
-/*   Updated: 2025/06/18 21:20:14 by manon            ###   ########.fr       */
+/*   Updated: 2025/06/24 19:17:45 by manon            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,54 +19,57 @@
 //nom exec philo?
 //ordre changeant
 
-//void	*ft_death(void *ptr)
+//&& args->philos->nbr_loop != 0
+//void	*ft_death(t_args *args, int i)
 //{
-//	int		i;
-//	t_args	*args;
-//
-//	args = (t_args *)ptr;
-//	while (1)
+//	if (get_time() - args->philos[i].satiated > args->t_die )
 //	{
-//		i = 0;
-//		while (i < args->nbr_p)
-//		{
-//			if (get_time() - args->philos[i].satiated > args->t_die )//&& args->philos->nbr_loop != 0)
-//			{
-//				pthread_mutex_lock(&args->print_mutex);
-//				printf("%ld Philo %d skip the game🗿\n",
-//					(get_time() - args->chrono), i);
-//				pthread_mutex_lock(&args->dead_mutex);
-//				args->dead = 1;
-//				pthread_mutex_unlock(&args->dead_mutex);
-//				pthread_mutex_unlock(&args->print_mutex);
-//				return (NULL);
-//			}
-//			i++;
-//		}
-//		usleep(1000);
+//		pthread_mutex_lock(&args->print_mutex);
+//		printf("%ld Philo %d skip the game🗿\n",
+//			(get_time() - args->chrono), i);
+//		pthread_mutex_lock(&args->dead_mutex);
+//		args->dead = 1;
+//		pthread_mutex_unlock(&args->dead_mutex);
+//		pthread_mutex_unlock(&args->print_mutex);
+//		return (NULL);
 //	}
 //	return (NULL);
 //}
 
-void	*ft_death(t_args *args, int i)
+void	*ft_death(void *ptr)
 {
-
-	if (get_time() - args->philos[i].satiated > args->t_die )
+	int		i;
+	t_args	*args;
+	long last_meal;
+	args = (t_args *)ptr;
+	while (1)
 	{
-		pthread_mutex_lock(&args->print_mutex);
-		printf("%ld Philo %d skip the game🗿\n",
-			(get_time() - args->chrono), i);
-		pthread_mutex_lock(&args->dead_mutex);
-		args->dead = 1;
-		pthread_mutex_unlock(&args->dead_mutex);
-		pthread_mutex_unlock(&args->print_mutex);
-		return (NULL);
+		i = 0;
+		while (i < args->nbr_p)
+		{
+			pthread_mutex_lock(&args->philos[i].satiated_mutex);
+			last_meal = args->philos[i].satiated;
+			pthread_mutex_unlock(&args->philos[i].satiated_mutex);
+			if (get_time() -last_meal > args->t_die )
+			{
+				pthread_mutex_lock(&args->print_mutex);
+				printf("%ld Philo %d skip the game🗿\n",
+					(get_time() - args->chrono), args->philos[i].id);
+				pthread_mutex_lock(&args->dead_mutex);
+				args->dead = 1;
+				pthread_mutex_unlock(&args->dead_mutex);
+				pthread_mutex_unlock(&args->print_mutex);
+				return (NULL);
+			}
+			i++;
+		}
+		usleep(100);
 	}
-	return (NULL);
 }
 
 void	ft_eat(t_args *args, int i)
 {
+
 	if (i % 2 == 0)
 	{
 		pthread_mutex_lock (&args->forks[i]);
@@ -82,6 +85,7 @@ void	ft_eat(t_args *args, int i)
 		print_status(args, i, "take an other fork🍽️");
 	}
 	print_status(args, i, "eat for the knowledges🍏");
+	usleep(args->t_eat * 1000);
 }
 
 void	*live_likeem(void *ptr)
@@ -96,24 +100,43 @@ void	*live_likeem(void *ptr)
 	philo->satiated = get_time();
 	if (i % 2 == 0)
 		usleep(100);
-	while (philo->nbr_loop > 0 && args->dead != 1)
+	while (philo->nbr_loop != 0)
 	{
+		pthread_mutex_lock(&args->dead_mutex);
+		if (args->dead)
+		{
+			pthread_mutex_unlock(&args->dead_mutex);
+			break;
+		}
+		pthread_mutex_unlock(&args->dead_mutex);
 		ft_eat(args, i);
+		pthread_mutex_lock(&args->dead_mutex);
+		if (args->dead)
+		{
+			pthread_mutex_unlock(&args->dead_mutex);
+			pthread_mutex_unlock(&args->forks[i]);
+			pthread_mutex_unlock(&args->forks[(i + 1) % args->nbr_p]);
+			break;
+		}
+		pthread_mutex_unlock(&args->dead_mutex);
+		pthread_mutex_lock(&philo->satiated_mutex);
 		philo->satiated = get_time();
-		usleep(args->t_eat);
+		philo->nbr_loop--;
+		pthread_mutex_unlock(&philo->satiated_mutex);
+		// usleep(args->t_eat);
 		pthread_mutex_unlock (&args->forks[i]);
 		pthread_mutex_unlock (&args->forks[(i + 1) % args->nbr_p]);
 		print_status(args, philo->id, "sleep in their dreams🌕");
-		usleep(args->t_sleep);
+		usleep(args->t_sleep * 1000);
 		print_status(args, philo->id, "thinks like a genius⚡");
-		philo->nbr_loop--;
+		usleep(500);
 	}
 	return (NULL);
 }
 
 static int	init_values(char **argv, t_args *args)
 {
-		//int i;
+	//int i;
 	//i = 0;
 	//while (argv[i])
 	//{
@@ -152,7 +175,9 @@ static int	init_struct(t_philo *philos, t_args *args)
 	{
 		if (pthread_mutex_init(&args->forks[i], NULL) != 0)
 			return (1);
-		philos[i].id = i;
+		if (pthread_mutex_init(&philos[i].satiated_mutex, NULL) != 0)
+			return (1);
+		philos[i].id = i + 1;
 		philos[i].args = args;
 		philos[i].satiated = get_time();
 		philos[i].nbr_loop = args->loop;
@@ -168,7 +193,7 @@ int	main(int argc, char **argv)
 	int			i;
 	t_args		args;
 	t_philo		*philos;
-	//pthread_t	verif_death;
+	pthread_t	verif_death;
 
 	i = 0;
 	if (argc != 5 && argc != 6)
@@ -178,14 +203,17 @@ int	main(int argc, char **argv)
 	philos = malloc(sizeof(t_philo) * args.nbr_p);
 	if (!philos)
 		return (printf("[Erreur : malloc philos]\n"));
+	args.philos = philos;
 	if (init_struct(philos, &args))
 		return (printf("[Erreur : init_struct]\n"));
-	args.philos = philos;
-	//pthread_create(&verif_death, NULL, ft_death, &args);
+	pthread_create(&verif_death, NULL, ft_death, &args);
 	while (i < args.nbr_p)
 		pthread_join(args.t_p[i++], NULL);
-	//pthread_join(verif_death, NULL);
+	pthread_join(verif_death, NULL);
 	while (i--)
+	{
 		pthread_mutex_destroy(&args.forks[i]);
+		pthread_mutex_destroy(&philos[i].satiated_mutex);
+	}
 	clean_all(philos, &args);
 }

@@ -6,7 +6,7 @@
 /*   By: manon <manon@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 22:38:13 by manon             #+#    #+#             */
-/*   Updated: 2025/06/18 20:56:58 by manon            ###   ########.fr       */
+/*   Updated: 2025/06/21 13:41:45 by manon            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,6 +47,7 @@ typedef struct s_philo
 	int				id;
 	int				nbr_loop;
 	t_args			*args;
+	pthread_mutex_t	satiated_mutex;
 }	t_philo;
 
 //utils.c
