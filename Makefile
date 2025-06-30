@@ -4,6 +4,7 @@ INCDIR = INCLUDES
 CC = gcc
 CFLAGS = -Wall -Wextra -Werror -I$(INCDIR) -pthread
 SRCS =	utils.c \
+		routine.c \
 		philosophers.c
 
 OBJS = $(SRCS:.c=.o)

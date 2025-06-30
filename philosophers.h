@@ -6,7 +6,7 @@
 /*   By: manon <manon@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 22:38:13 by manon             #+#    #+#             */
-/*   Updated: 2025/06/21 13:41:45 by manon            ###   ########.fr       */
+/*   Updated: 2025/06/30 16:18:33 by manon            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,11 @@ typedef struct s_philo
 int				ft_atoi(const char *str);
 unsigned long	get_time(void);
 void			print_status(t_args *args, int i, const char *str);
-void 			clean_all(t_philo *philos, t_args *args);
+void			clean_all(t_philo *philos, t_args *args);
+
+//routine.c
+void			*ft_death(void *ptr);
+void			ft_eat(t_args *args, int i);
+void			*live_likeem(void *ptr);
 
 #endif

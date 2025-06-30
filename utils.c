@@ -6,7 +6,7 @@
 /*   By: manon <manon@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/31 13:02:16 by manon             #+#    #+#             */
-/*   Updated: 2025/06/25 13:30:38 by manon            ###   ########.fr       */
+/*   Updated: 2025/06/30 13:51:57 by manon            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ int	ft_atoi(const char *str)
 		i++;
 	}
 	if (str[i] != '\0' || i == 0)
-		return (-1);
+		return (0);
 	return (res);
 }
 
@@ -50,12 +50,21 @@ void	print_status(t_args *args, int i, const char *str)
 	pthread_mutex_unlock(&args->dead_mutex);
 	pthread_mutex_lock(&args->print_mutex);
 	current = (get_time() - args->chrono);
-	printf("%d Philo %d %s\n", current, i, str);
+	printf("%d Philo %d %s\n", current, i + 1, str);
 	pthread_mutex_unlock(&args->print_mutex);
 }
 
 void	clean_all(t_philo *philos, t_args *args)
 {
+	int	i;
+
+	i = 0;
+	while (i < args->nbr_p)
+	{
+		pthread_mutex_destroy(&args->forks[i]);
+		pthread_mutex_destroy(&philos[i].satiated_mutex);
+		i++;
+	}
 	pthread_mutex_destroy(&args->print_mutex);
 	pthread_mutex_destroy(&args->dead_mutex);
 	free(args->t_p);
