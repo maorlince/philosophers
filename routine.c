@@ -6,17 +6,35 @@
 /*   By: manon <manon@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 16:07:16 by manon             #+#    #+#             */
-/*   Updated: 2025/06/30 16:54:06 by manon            ###   ########.fr       */
+/*   Updated: 2025/07/01 16:32:55 by manon            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosophers.h"
 
+static int	check_satiated(t_args *args)
+{
+	int	i;
+	int	all_done;
+
+	i = 0;
+	all_done = 1;
+	while (i < args->nbr_p)
+	{
+		pthread_mutex_lock(&args->philos[i].satiated_mutex);
+		if (args->philos[i].nbr_loop != 0)
+			all_done = 0;
+		pthread_mutex_unlock(&args->philos[i].satiated_mutex);
+		i++;
+	}
+	usleep(1000);
+	return (all_done);
+}
+
 void	*ft_death(void *ptr)
 {
 	int		i;
 	t_args	*args;
-	long	last_meal;
 
 	args = (t_args *)ptr;
 	while (1)
@@ -24,10 +42,7 @@ void	*ft_death(void *ptr)
 		i = 0;
 		while (i < args->nbr_p)
 		{
-			pthread_mutex_lock(&args->philos[i].satiated_mutex);
-			last_meal = args->philos[i].satiated;
-			pthread_mutex_unlock(&args->philos[i].satiated_mutex);
-			if (get_time() - last_meal > args->t_die)
+			if (get_time() - args->philos[i].satiated > args->t_die)
 			{
 				pthread_mutex_lock(&args->dead_mutex);
 				args->dead = 1;
@@ -40,21 +55,8 @@ void	*ft_death(void *ptr)
 			}
 			i++;
 		}
-		int	all_done;
-		int	j;
-		all_done = 1;
-		j = 0;
-		while (j < args->nbr_p)
-		{
-			pthread_mutex_lock(&args->philos[j].satiated_mutex);
-			if (args->philos[j].nbr_loop != 0)
-				all_done = 0;
-			pthread_mutex_unlock(&args->philos[j].satiated_mutex);
-			j++;
-		}
-		if (all_done)
+		if (check_satiated(args))
 			return (NULL);
-		usleep(1000);
 	}
 }
 
@@ -85,6 +87,23 @@ void	ft_eat(t_args *args, int i)
 	pthread_mutex_unlock(&args->forks[(i + 1) % args->nbr_p]);
 }
 
+static int	check_death(t_philo *philo)
+{
+	t_args	*args;
+
+	args = philo->args;
+	pthread_mutex_lock(&args->dead_mutex);
+	if (args->dead)
+	{
+		pthread_mutex_unlock(&args->dead_mutex);
+		return (1);
+	}
+	pthread_mutex_unlock(&args->dead_mutex);
+	if (philo->nbr_loop == 0)
+		return (1);
+	return (0);
+}
+
 void	*live_likeem(void *ptr)
 {
 	t_philo			*philo;
@@ -99,25 +118,11 @@ void	*live_likeem(void *ptr)
 	pthread_mutex_unlock(&philo->satiated_mutex);
 	if (i % 2 == 0)
 		usleep(100);
-	while (1)
+	while (!check_death(philo))
 	{
-		pthread_mutex_lock(&args->dead_mutex);
-		if (args->dead)
-		{
-			pthread_mutex_unlock(&args->dead_mutex);
-			break ;
-		}
-		pthread_mutex_unlock(&args->dead_mutex);
-		if (philo->nbr_loop == 0)
-			break ;
 		ft_eat(args, i);
-		pthread_mutex_lock(&args->dead_mutex);
-		if (args->dead)
-		{
-			pthread_mutex_unlock(&args->dead_mutex);
+		if (check_death(philo))
 			break ;
-		}
-		pthread_mutex_unlock(&args->dead_mutex);
 		print_status(args, i, "sleep in their dreams🌕");
 		usleep(args->t_sleep * 1000);
 		print_status(args, i, "thinks like a genius⚡");

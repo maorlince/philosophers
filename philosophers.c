@@ -6,13 +6,12 @@
 /*   By: manon <manon@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 22:33:32 by manon             #+#    #+#             */
-/*   Updated: 2025/06/30 16:54:37 by manon            ###   ########.fr       */
+/*   Updated: 2025/07/01 16:26:49 by manon            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosophers.h"
 
-//norme
 //nom exec philo????
 //t_eat satiated when?????
 //args value error 0 t_die etc ok????
@@ -68,7 +67,7 @@ static int	init_struct(t_philo *philos, t_args *args)
 	return (0);
 }
 
-int verif(t_philo *philos, t_args *args)
+int	verif(t_philo *philos, t_args *args)
 {
 	if (!philos)
 		return (printf("[Erreur : malloc philos]\n"));
@@ -77,7 +76,6 @@ int verif(t_philo *philos, t_args *args)
 		return (printf("[Erreur : init_struct]\n"));
 	if (args->nbr_p == 1)
 	{
-		//print_status(&args, 0, "take a fork🍴");
 		usleep(args->t_die * 1000);
 		print_status(args, 0, "skip the game🗿");
 		clean_all(philos, args);
