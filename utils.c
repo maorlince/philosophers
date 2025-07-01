@@ -6,7 +6,7 @@
 /*   By: manon <manon@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/31 13:02:16 by manon             #+#    #+#             */
-/*   Updated: 2025/06/30 13:51:57 by manon            ###   ########.fr       */
+/*   Updated: 2025/07/01 19:49:36 by manon            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,8 @@
 
 int	ft_atoi(const char *str)
 {
-	int	res;
-	int	i;
+	long	res;
+	int		i;
 
 	i = 0;
 	res = 0;
@@ -23,10 +23,12 @@ int	ft_atoi(const char *str)
 	{
 		res = res * 10 + (str[i] - '0');
 		i++;
+		if (res > 2147483647)
+			return (-1);
 	}
 	if (str[i] != '\0' || i == 0)
-		return (0);
-	return (res);
+		return (-1);
+	return ((int)res);
 }
 
 unsigned long	get_time(void)
@@ -70,4 +72,16 @@ void	clean_all(t_philo *philos, t_args *args)
 	free(args->t_p);
 	free(args->forks);
 	free(philos);
+}
+
+int	is_still_alive(int i, t_args *args)
+{
+	unsigned long	res;
+
+	pthread_mutex_lock(&args->philos[i].satiated_mutex);
+	res = get_time() - args->philos[i].satiated;
+	pthread_mutex_unlock(&args->philos[i].satiated_mutex);
+	if (res > (long unsigned int)args->t_die)
+		return (1);
+	return (0);
 }

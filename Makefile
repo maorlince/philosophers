@@ -2,7 +2,7 @@ NAME = philo
 
 INCDIR = INCLUDES
 CC = gcc
-CFLAGS = -Wall -Wextra -Werror -I$(INCDIR) -pthread
+CFLAGS = -Wall -Wextra -Werror -I$(INCDIR) -pthread -g3
 SRCS =	utils.c \
 		routine.c \
 		philosophers.c

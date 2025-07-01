@@ -6,7 +6,7 @@
 /*   By: manon <manon@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 16:07:16 by manon             #+#    #+#             */
-/*   Updated: 2025/07/01 16:32:55 by manon            ###   ########.fr       */
+/*   Updated: 2025/07/01 19:49:25 by manon            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ void	*ft_death(void *ptr)
 		i = 0;
 		while (i < args->nbr_p)
 		{
-			if (get_time() - args->philos[i].satiated > args->t_die)
+			if (is_still_alive(i, args))
 			{
 				pthread_mutex_lock(&args->dead_mutex);
 				args->dead = 1;

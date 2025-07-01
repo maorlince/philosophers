@@ -6,7 +6,7 @@
 /*   By: manon <manon@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 22:38:13 by manon             #+#    #+#             */
-/*   Updated: 2025/06/30 16:18:33 by manon            ###   ########.fr       */
+/*   Updated: 2025/07/01 19:49:59 by manon            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@
 
 //editeur de lien -lpthread et compilateur -D_REENTRANT et/ou -DLinux
 // valgrind --tool=helgrind ./philo 5 610 200 200 3
+// valgrind --tool=drd ./philo 20 500 40 30 5
 
 struct					s_philo;
 typedef struct s_philo	t_philo;
@@ -30,9 +31,9 @@ typedef struct s_args
 	int				nbr_p;
 	int				loop;
 	int				dead;
-	unsigned long	t_die;
-	unsigned long	t_eat;
-	unsigned long	t_sleep;
+	int				t_die;
+	int				t_eat;
+	int				t_sleep;
 	unsigned long	chrono;
 	t_philo			*philos;
 	pthread_t		*t_p;
@@ -52,6 +53,7 @@ typedef struct s_philo
 
 //utils.c
 int				ft_atoi(const char *str);
+int				is_still_alive(int i, t_args *args);
 unsigned long	get_time(void);
 void			print_status(t_args *args, int i, const char *str);
 void			clean_all(t_philo *philos, t_args *args);

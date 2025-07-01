@@ -6,7 +6,7 @@
 /*   By: manon <manon@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 22:33:32 by manon             #+#    #+#             */
-/*   Updated: 2025/07/01 16:26:49 by manon            ###   ########.fr       */
+/*   Updated: 2025/07/01 16:56:30 by manon            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,8 +30,8 @@ static int	init_values(char **argv, t_args *args)
 		args->loop = ft_atoi(argv[5]);
 	else
 		args->loop = -1;
-	if (!args->t_p || !args->forks || args->nbr_p <= 0 || args->t_die <= 0
-		|| args->t_eat <= 0 || args->t_sleep <= 0)
+	if (!args->t_p || !args->forks || args->nbr_p <= 0 || args->t_die < 0
+		|| args->t_eat < 0 || args->t_sleep < 0)
 		return (1);
 	if (pthread_mutex_init(&args->print_mutex, NULL) != 0)
 		return (1);
