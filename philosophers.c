@@ -3,18 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   philosophers.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: manon <manon@student.42.fr>                +#+  +:+       +#+        */
+/*   By: mlemerci <mlemerci@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 22:33:32 by manon             #+#    #+#             */
-/*   Updated: 2025/07/01 16:56:30 by manon            ###   ########.fr       */
+/*   Updated: 2025/09/12 09:26:26 by mlemerci         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosophers.h"
-
-//nom exec philo????
-//t_eat satiated when?????
-//args value error 0 t_die etc ok????
 
 static int	init_values(char **argv, t_args *args)
 {

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   routine.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: manon <manon@student.42.fr>                +#+  +:+       +#+        */
+/*   By: mlemerci <mlemerci@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 16:07:16 by manon             #+#    #+#             */
-/*   Updated: 2025/07/01 19:49:25 by manon            ###   ########.fr       */
+/*   Updated: 2025/09/12 10:20:20 by mlemerci         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ void	*ft_death(void *ptr)
 				args->dead = 1;
 				pthread_mutex_unlock(&args->dead_mutex);
 				pthread_mutex_lock(&args->print_mutex);
-				printf("%ld Philo %d skip the game🗿\n",
+				printf("\033[38;5;249m%ld Philo\033[38;5;247m %d skip\033[38;5;232m the game🗿\033[0m\n",
 					(get_time() - args->chrono), args->philos[i].id);
 				pthread_mutex_unlock(&args->print_mutex);
 				return (NULL);
@@ -65,18 +65,18 @@ void	ft_eat(t_args *args, int i)
 	if (i % 2 == 0)
 	{
 		pthread_mutex_lock (&args->forks[i]);
-		print_status(args, i, "take a fork🍴");
+		print_status(args, i, "\033[38;5;193mhas take a fork🍴\033[0m");
 		pthread_mutex_lock (&args->forks[(i + 1) % args->nbr_p]);
-		print_status(args, i, "take an other fork🍽️");
+		print_status(args, i, "\033[38;5;194mhas take an other fork🍽️\033[0m");
 	}
 	else
 	{
 		pthread_mutex_lock (&args->forks[(i + 1) % args->nbr_p]);
-		print_status(args, i, "take a fork🍴");
+		print_status(args, i, "\033[38;5;193mhas take a fork🍴\033[0m");
 		pthread_mutex_lock (&args->forks[i]);
-		print_status(args, i, "take an other fork🍽️");
+		print_status(args, i, "\033[38;5;194mhas take an other fork🍽️\033[0m");
 	}
-	print_status(args, i, "eat for the knowledges🍏");
+	print_status(args, i, "\033[38;5;118mis eating🍏\033[0m");
 	pthread_mutex_lock(&args->philos[i].satiated_mutex);
 	args->philos[i].satiated = get_time();
 	if (args->philos[i].nbr_loop > 0)
@@ -103,7 +103,8 @@ static int	check_death(t_philo *philo)
 		return (1);
 	return (0);
 }
-
+// \033[38;5;%dm
+// \033[0m
 void	*live_likeem(void *ptr)
 {
 	t_philo			*philo;
@@ -123,9 +124,9 @@ void	*live_likeem(void *ptr)
 		ft_eat(args, i);
 		if (check_death(philo))
 			break ;
-		print_status(args, i, "sleep in their dreams🌕");
+		print_status(args, i, "\033[38;5;207mis sleeping🌕\033[0m");
 		usleep(args->t_sleep * 1000);
-		print_status(args, i, "thinks like a genius⚡");
+		print_status(args, i, "\033[38;5;226mis thinking⚡\033[0m");
 		usleep(1000);
 	}
 	return (NULL);
