@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   routine.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mlemerci <mlemerci@student.42.fr>          +#+  +:+       +#+        */
+/*   By: manon <manon@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 16:07:16 by manon             #+#    #+#             */
-/*   Updated: 2025/09/12 10:20:20 by mlemerci         ###   ########.fr       */
+/*   Updated: 2025/09/18 16:25:32 by manon            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ void	*ft_death(void *ptr)
 				args->dead = 1;
 				pthread_mutex_unlock(&args->dead_mutex);
 				pthread_mutex_lock(&args->print_mutex);
-				printf("\033[38;5;249m%ld Philo\033[38;5;247m %d skip\033[38;5;232m the game🗿\033[0m\n",
+				printf("%ld Philo %d \033[38;5;232mskip the game🗿\033[0m\n",
 					(get_time() - args->chrono), args->philos[i].id);
 				pthread_mutex_unlock(&args->print_mutex);
 				return (NULL);
@@ -103,8 +103,7 @@ static int	check_death(t_philo *philo)
 		return (1);
 	return (0);
 }
-// \033[38;5;%dm
-// \033[0m
+
 void	*live_likeem(void *ptr)
 {
 	t_philo			*philo;
@@ -124,9 +123,9 @@ void	*live_likeem(void *ptr)
 		ft_eat(args, i);
 		if (check_death(philo))
 			break ;
-		print_status(args, i, "\033[38;5;207mis sleeping🌕\033[0m");
+		print_status(args, i, "\033[38;5;153mis sleeping☄️\033[0m");
 		usleep(args->t_sleep * 1000);
-		print_status(args, i, "\033[38;5;226mis thinking⚡\033[0m");
+		print_status(args, i, "\033[38;5;227mis thinking⚡\033[0m");
 		usleep(1000);
 	}
 	return (NULL);

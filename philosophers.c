@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philosophers.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mlemerci <mlemerci@student.42.fr>          +#+  +:+       +#+        */
+/*   By: manon <manon@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 22:33:32 by manon             #+#    #+#             */
-/*   Updated: 2025/09/12 09:26:26 by mlemerci         ###   ########.fr       */
+/*   Updated: 2025/09/18 16:21:49 by manon            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,13 +70,6 @@ int	verif(t_philo *philos, t_args *args)
 	args->philos = philos;
 	if (init_struct(philos, args))
 		return (printf("[Erreur : init_struct]\n"));
-	if (args->nbr_p == 1)
-	{
-		usleep(args->t_die * 1000);
-		print_status(args, 0, "skip the game🗿");
-		clean_all(philos, args);
-		return (1);
-	}
 	return (0);
 }
 
